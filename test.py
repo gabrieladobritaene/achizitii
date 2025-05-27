@@ -5,7 +5,7 @@ import plotly.express as px
 st.set_page_config(layout="wide")
 st.title("📊 Analiză Achiziții per An")
 
-uploaded_file = st.file_uploader("Încarcă fișierul(Agent, Produs, Cantitate, An, Regiune, URL_Poza - opțional)", type=["xlsx", "csv"])
+uploaded_file = st.file_uploader("Încarcă fișierul(Agent, Produs, Cantitate, An, Regiune)", type=["xlsx", "csv"])
 
 if uploaded_file:
     if uploaded_file.name.endswith("csv"):
@@ -176,4 +176,4 @@ if uploaded_file:
         st.plotly_chart(fig_comp, use_container_width=True)
 
         st.markdown("---")
-        st.markdown("Aplicație interactivă cu grafice moderne realizată cu 💙 Streamlit + Plotly.")
+        st.markdown(" 💙/ gd.")

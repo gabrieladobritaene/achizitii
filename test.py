@@ -98,6 +98,26 @@ if uploaded_file:
             fig_pie.update_traces(textinfo='percent+value', textfont_size=14)
             st.plotly_chart(fig_pie, use_container_width=True)
 
+        st.subheader("📊 Comparație Regiuni SUD vs VEST pe An")
+        if 'Regiune' in df.columns:
+            an_pie = st.selectbox("Selectează anul pentru analiza regională", sorted(df['An'].unique()), key="pie_an")
+            df_pie = df[df['An'] == an_pie]
+
+            regiune_total_an = df_pie.groupby('Regiune')['Cantitate'].sum().reset_index()
+            st.dataframe(regiune_total_an.rename(columns={'Cantitate': f'Total tone în {an_pie}'}))
+
+            fig_pie = px.pie(
+                regiune_total_an,
+                names='Regiune',
+                values='Cantitate',
+                title=f"Distribuție Cantitate per Regiune în {an_pie}",
+                hole=0.4
+            )
+            fig_pie.update_traces(textinfo='percent+value', textfont_size=14)
+            st.plotly_chart(fig_pie, use_container_width=True)
+
+
+
         st.subheader("🏆 Top 5 agenți după cantitate totală")
         if 'Regiune' in df.columns:
             top5 = df.groupby(['Agent', 'Regiune'])['Cantitate'].sum().reset_index()

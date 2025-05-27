@@ -5,7 +5,7 @@ import plotly.express as px
 st.set_page_config(layout="wide")
 st.title("📊 Analiză Achiziții per An")
 
-uploaded_file = st.file_uploader("Încarcă fișierul combinat (Agent, Produs, Cantitate, An, Regiune, URL_Poza - opțional)", type=["xlsx", "csv"])
+uploaded_file = st.file_uploader("Încarcă fișierul(Agent, Produs, Cantitate, An, Regiune, URL_Poza - opțional)", type=["xlsx", "csv"])
 
 if uploaded_file:
     if uploaded_file.name.endswith("csv"):
@@ -70,9 +70,18 @@ if uploaded_file:
             st.plotly_chart(fig, use_container_width=True)
 
         st.markdown("---")
+
+
         st.subheader("📍 Analiză detaliată per agent")
         for agent in sorted(df['Agent'].unique()):
             st.markdown(f"### Agent: **{agent}**")
+
+            # Afișează poza agentului (dacă există)
+            if 'URL_Poza' in df.columns:
+                url_row = df[df['Agent'].str.strip().str.upper() == agent.strip().upper()]['URL_Poza'].dropna().unique()
+                if len(url_row) > 0 and url_row[0].startswith("http"):
+                    st.image(url_row[0], caption=agent, width=200)
+
             agent_df = df[df['Agent'] == agent]
             fig = px.bar(agent_df, x='Produs', y='Cantitate', color='An', barmode='group',
                          title=f"Cantitate pe produs în timp - {agent}",
@@ -148,13 +157,15 @@ if uploaded_file:
 
         cols = st.columns(2)
         for i, agent in enumerate([agent_1, agent_2]):
-            url_col = 'URL_Poza'
-            if url_col in df.columns:
-                url = df[df['Agent'] == agent][url_col].dropna().unique()
-                if len(url) > 0:
+            if 'URL_Poza' in df.columns:
+                match = df[df['Agent'].str.strip().str.upper() == agent.strip().upper()]
+                url = match['URL_Poza'].dropna().unique()
+                if len(url) > 0 and url[0].startswith("https:"):
                     cols[i].image(url[0], caption=agent, width=180)
+                else:
+                    cols[i].warning(f"Poza agentului {agent} nu este disponibilă.")
 
-        fig_comp = px.bar(
+            fig_comp = px.bar(
             total_comparatie,
             x='Agent',
             y='Cantitate',
